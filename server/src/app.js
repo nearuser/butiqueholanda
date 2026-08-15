@@ -42,15 +42,14 @@ app.get('/api/admin/stats', auth, async (req, res) => {
 
 app.get('/api/health', (req, res) => res.json({ ok: true, env: process.env.NODE_ENV }));
 
-// En producción: servir el frontend estático y manejar rutas SPA
-if (process.env.NODE_ENV === 'production') {
-  const clientDist = path.join(__dirname, '../../client/dist');
-  if (fs.existsSync(clientDist)) {
-    app.use(express.static(clientDist));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(clientDist, 'index.html'));
-    });
-  }
+// Servir el frontend estático si el build existe
+const clientDist = path.join(__dirname, '../../client/dist');
+console.log('[static] client/dist path:', clientDist, '| exists:', fs.existsSync(clientDist));
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
 }
 
 testConnection().then(() => {
