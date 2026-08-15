@@ -131,10 +131,19 @@ if (n === 0) {
     ('Cadena Rolo Plata 925 60cm','cadena-rolo-plata-925-60cm','Cadena rolo (eslabón redondo) en plata 925, calibre 3mm, 60cm.','Cadena tipo rolo en plata 925, eslabón circular calibre 3mm, largo 60cm. Perfecta para usar con dijes pesados. Cierre de langosta robusto.','Plata 925',18.5,34990,25000,10,90,5,'https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&q=80',0),
     ('Dije Cruz Latina Oro 10K','dije-cruz-latina-oro-10k','Dije cruz latina en oro 10K con acabado diamantado.','Dije de cruz latina en oro amarillo 10K con acabado diamantado en los bordes. Medidas: 2.5cm x 1.5cm. Incluye argolla para pasar cadena de hasta 3mm.','Oro 10K',2.1,44990,32000,8,55,6,'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80',0),
     ('Dije Letra Inicial Plata','dije-letra-inicial-plata','Dije letra inicial en plata 925 con acabado brillante, 2cm.','Personaliza tu cadena con tu inicial favorita. Dije letra en plata 925 con acabado espejo. Altura 2cm. Disponible en todas las letras del abecedario.','Plata 925',1.8,19990,13500,15,150,6,'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80',0);
-
-    INSERT INTO usuarios (nombre, email, password, rol) VALUES
-    ('Administrador Holanda','admin@holanda.cl','$2a$10$K04Qqib2oc/yOKrGcUgyouWCbsBSSAGf5plGRiQ2QI9WilIDotdWC','admin');
   `);
+}
+
+// Admin siempre garantizado — query parametrizada para evitar problemas con caracteres especiales
+const adminExists = db.prepare("SELECT COUNT(*) as n FROM usuarios WHERE email = 'admin@holanda.cl'").get();
+if (!adminExists.n) {
+  db.prepare('INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)').run(
+    'Administrador Holanda',
+    'admin@holanda.cl',
+    '$2a$10$K04Qqib2oc/yOKrGcUgyouWCbsBSSAGf5plGRiQ2QI9WilIDotdWC',
+    'admin'
+  );
+  console.log('✅ Usuario admin creado');
 }
 
 function execQuery(sql, params = []) {
