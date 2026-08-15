@@ -44,7 +44,7 @@ app.get('/api/health', (req, res) => res.json({ ok: true, env: process.env.NODE_
 
 // En producción: servir el frontend estático y manejar rutas SPA
 if (process.env.NODE_ENV === 'production') {
-  const clientDist = path.join(__dirname, '../../../client/dist');
+  const clientDist = path.join(__dirname, '../../client/dist');
   if (fs.existsSync(clientDist)) {
     app.use(express.static(clientDist));
     app.get('*', (req, res) => {
